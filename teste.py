@@ -4,8 +4,8 @@ import random
 # Configuração da página
 st.set_page_config(page_title="I.A. Detetive", layout="centered")
 
-st.title("🕵️‍♂️ I.A. Detetive")
-st.write("Bem-vindo(a) ao **I.A. Detetive**, o jogo onde apenas os verdadeiros investigadores descobrem a verdade. A vítima foi encontrada... mas quem será o culpado?")
+st.title("I.A. Detetive")
+st.write("Bem-vindo(a) ao **I.A. Detetive** A vítima foi encontrada... mas quem será o culpado?")
 
 # Listas de possibilidades
 pessoas = [
@@ -74,7 +74,7 @@ if st.button("🔪 Gerar Novo Caso"):
 if st.session_state.crime:
     crime = st.session_state.crime
 
-    st.subheader("🩸 O CRIME")
+    st.subheader("O CRIME")
     st.write(f"A vítima é **{crime['vitima']}**.")
     st.write("A polícia encontrou a cena do crime, mas as evidências ainda são inconclusivas. Cabe a você descobrir o culpado.")
 
@@ -84,7 +84,7 @@ if st.session_state.crime:
     local = st.selectbox("Onde ocorreu o crime?", [""] + locais)
     arma = st.selectbox("Qual foi a arma do crime?", [""] + armas)
 
-    if st.button("🔍 Fazer palpite"):
+    if st.button("Fazer palpite"):
         if st.session_state.tentativas <= 0:
             st.warning("Suas tentativas acabaram! Revele o mistério abaixo.")
         elif not assassino or not local or not arma:
@@ -115,7 +115,7 @@ if st.session_state.crime:
 
     # Revelar o caso se acabar as tentativas
     if st.session_state.tentativas == 0 and not st.session_state.revelado:
-        if st.button("🕯️ Revelar o mistério"):
+        if st.button("Revelar o mistério"):
             st.error(
                 f"O verdadeiro assassino era **{crime['assassino']}**, "
                 f"que matou **{crime['vitima']}** {crime['local']} com **{crime['arma']}**, {crime['motivo']}."
