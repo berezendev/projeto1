@@ -5,7 +5,7 @@ import random
 st.set_page_config(page_title="I.A. Detetive", layout="centered")
 
 st.title("I.A. Detetive")
-st.write("Bem-vindo(a) ao **I.A. Detetive** A vítima foi encontrada... mas quem será o culpado?")
+st.write("Bem-vindo(a) ao **I.A. Detetive**.    A vítima foi encontrada... mas quem será o culpado?")
 
 # Listas de possibilidades
 pessoas = [
