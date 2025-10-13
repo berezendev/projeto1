@@ -1,7 +1,10 @@
 import pandas as pd
+importstreamlit as st
 
 dataset=pd.read_csv('https://www.irdx.com.br/media/uploads/paises.csv')
 import plotly.express as px
+
+st.dataframe(dataset)
 
 fig=px.scatter_geo(dataset,
                    lat=dataset['latitude'],
