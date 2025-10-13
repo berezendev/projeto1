@@ -1,13 +1,21 @@
 import streamlit as st
 import random
 
-# Configuração da página
-st.set_page_config(page_title="I.A. Detetive",layout="centered")
+# ==============================
+# CONFIGURAÇÃO DA PÁGINA
+# ==============================
+st.set_page_config(page_title="I.A. Detetive", layout="centered")
 
-st.title(" I.A. Detetive")
-st.write("Bem-vindo(a) ao simulador de casos criminais mais misterioso da internet. Clique no botão abaixo e descubra o próximo crime a ser desvendado!")
+st.title("🕵️ I.A. Detetive — O Jogo")
+st.write("""
+Descubra o criminoso, o local e a arma do crime!  
+Mas atenção: você tem **8 tentativas** para resolver o caso antes que o culpado fuja.  
+Use sua intuição... e um pouco de sorte.
+""")
 
-# Listas de possibilidades
+# ==============================
+# BASE DE DADOS
+# ==============================
 pessoas = [
     "Dona Gertrudes, a vizinha fofoqueira",
     "Dr. Campos, o advogado",
@@ -16,15 +24,6 @@ pessoas = [
     "Ricardo, o estagiário do fórum",
     "Padre Bento, o pároco",
     "Helena, a professora de Filosofia",
-]
-
-vitimas = [
-    "Jair, o porteito do prédio",
-    "Fabíola, a juíza",
-    "Tadeu, o vereador",
-    "Robson, o segurança do tribunal",
-    "Matt, o influencer",
-    "Roberto, o corretor de imóveis",
 ]
 
 locais = [
@@ -52,28 +51,89 @@ motivos = [
     "para encobrir um caso de corrupção",
 ]
 
-# Função para gerar o caso
-def gerar_caso():
-    autor = random.choice(pessoas)
-    vitima = random.choice(vitimas)
-    local = random.choice(locais)
-    arma = random.choice(armas)
-    motivo = random.choice(motivos)
+# ==============================
+# INICIALIZAÇÃO DO JOGO
+# ==============================
+if "caso" not in st.session_state:
+    st.session_state.caso = {
+        "autor": random.choice(pessoas),
+        "local": random.choice(locais),
+        "arma": random.choice(armas),
+        "motivo": random.choice(motivos),
+    }
+    st.session_state.tentativas = 8
+    st.session_state.encerrado = False
+    st.session_state.venceu = False
 
-    caso = f"""
-**CASO GERADO:**
+# ==============================
+# INTERFACE
+# ==============================
+st.subheader("🔍 Faça suas escolhas:")
 
-O(a) suspeito(a) **{autor}** teria assassinado **{vitima}** {local},  
-**{arma}**, **{motivo}**.
+autor_escolhido = st.selectbox("Quem cometeu o crime?", pessoas)
+local_escolhido = st.selectbox("Onde o crime aconteceu?", locais)
+arma_escolhida = st.selectbox("Com qual arma?", armas)
 
-Agora cabe a você, detetive, descobrir se há provas, álibi e o verdadeiro culpado...
+# ==============================
+# LÓGICA DO JOGO
+# ==============================
+if st.button("Investigar 🔪") and not st.session_state.encerrado:
+    correto = st.session_state.caso
+    acertos = []
 
-🔎 *O mistério está lançado!*
-"""
-    return caso
+    if autor_escolhido == correto["autor"]:
+        acertos.append("autor")
+    if local_escolhido == correto["local"]:
+        acertos.append("local")
+    if arma_escolhida == correto["arma"]:
+        acertos.append("arma")
 
-# Botão
-if st.button("Gerar Novo Caso 🔪"):
-    st.markdown(gerar_caso())
-else:
-    st.info("Clique no botão acima para gerar um novo caso misterioso!")
+    if len(acertos) == 3:
+        st.success("🎉 Parabéns, detetive! Você desvendou o crime!")
+        st.markdown(f"""
+**Resumo do caso resolvido:**
+O(a) culpado(a) era **{correto['autor']}**,  
+que cometeu o crime **{correto['local']}**,  
+**{correto['arma']}**,  
+**{correto['motivo']}**.
+""")
+        st.session_state.venceu = True
+        st.session_state.encerrado = True
+    else:
+        st.session_state.tentativas -= 1
+        if st.session_state.tentativas > 0:
+            dicas = {
+                0: "Nenhuma pista certa ainda, tente observar melhor as conexões...",
+                1: "Você acertou **uma** das opções!",
+                2: "Você acertou **duas** das opções! Está perto!",
+            }
+            st.warning(
+                f"❌ Ainda não foi dessa vez. {dicas.get(len(acertos), '')}\n\n"
+                f"Tentativas restantes: **{st.session_state.tentativas}**"
+            )
+        else:
+            st.error("💀 O culpado fugiu! O caso foi encerrado.")
+            st.markdown(f"""
+**Solução do caso:**
+O(a) verdadeiro(a) assassino(a) era **{correto['autor']}**,  
+no local **{correto['local']}**,  
+**{correto['arma']}**,  
+**{correto['motivo']}**.
+""")
+            st.session_state.encerrado = True
+
+# ==============================
+# REINICIAR JOGO
+# ==============================
+if st.session_state.encerrado:
+    if st.button("Jogar Novamente 🔁"):
+        st.session_state.caso = {
+            "autor": random.choice(pessoas),
+            "local": random.choice(locais),
+            "arma": random.choice(armas),
+            "motivo": random.choice(motivos),
+        }
+        st.session_state.tentativas = 8
+        st.session_state.encerrado = False
+        st.session_state.venceu = False
+        st.experimental_rerun()
