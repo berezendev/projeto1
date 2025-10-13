@@ -4,7 +4,7 @@ import random
 # Configuração da página
 st.set_page_config(page_title="I.A. Detetive", layout="centered")
 
-st.title("🕵️‍♂️ I.A. Detetive")
+st.title("I.A. Detetive")
 st.write("Bem-vindo(a) ao **I.A. Detetive**, o jogo onde lógica, sorte e faro investigativo se misturam. Descubra quem matou, onde e com o quê — antes que o caso esfrie!")
 
 # Dados do jogo
@@ -64,7 +64,7 @@ def gerar_crime():
     }
 
 # Início do jogo
-if st.button("🔪 Gerar Novo Caso"):
+if st.button("Gerar Novo Caso"):
     st.session_state.crime = gerar_crime()
     st.session_state.tentativas = 8
     st.session_state.mensagens = []
@@ -77,14 +77,6 @@ if st.session_state.crime:
     st.subheader("🩸 O CRIME")
     st.write(f"A vítima é **{crime['vitima']}**.")
     st.write("A cena do crime é misteriosa... Mas há rumores de uma discussão recente e um objeto fora do lugar.")
-
-    # Dicas progressivas
-    dicas = [
-        f"Dica 1️⃣: O suspeito(a) frequenta o mesmo ambiente que a vítima.",
-        f"Dica 2️⃣: O local do crime é um lugar **público**.",
-        f"Dica 3️⃣: A arma não é algo normalmente letal.",
-        f"Dica 4️⃣: O motivo envolve **{crime['motivo'].split()[2]}**...",  # pequena pista indireta
-    ]
 
     st.write(f"Tentativas restantes: **{st.session_state.tentativas}**")
 
