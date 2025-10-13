@@ -1,21 +1,13 @@
 import streamlit as st
 import random
 
-# ==============================
-# CONFIGURAÇÃO DA PÁGINA
-# ==============================
+# Configuração da página
 st.set_page_config(page_title="I.A. Detetive", layout="centered")
 
-st.title("🕵️ I.A. Detetive — O Jogo")
-st.write("""
-Descubra o criminoso, o local e a arma do crime!  
-Mas atenção: você tem **8 tentativas** para resolver o caso antes que o culpado fuja.  
-Use sua intuição... e um pouco de sorte.
-""")
+st.title("🕵️‍♂️ I.A. Detetive")
+st.write("Bem-vindo(a) ao **I.A. Detetive**, o jogo onde lógica, sorte e faro investigativo se misturam. Descubra quem matou, onde e com o quê — antes que o caso esfrie!")
 
-# ==============================
-# BASE DE DADOS
-# ==============================
+# Dados do jogo
 pessoas = [
     "Dona Gertrudes, a vizinha fofoqueira",
     "Dr. Campos, o advogado",
@@ -36,11 +28,11 @@ locais = [
 ]
 
 armas = [
-    "com um Vade Mecum de 8kg",
-    "com uma caneta tinteiro envenenada",
-    "com um grampeador pesado",
-    "com uma garrafa de café fervente",
-    "com um taco de sinuca",
+    "um Vade Mecum de 8kg",
+    "uma caneta tinteiro envenenada",
+    "um grampeador pesado",
+    "uma garrafa de café fervente",
+    "um taco de sinuca",
 ]
 
 motivos = [
@@ -51,89 +43,84 @@ motivos = [
     "para encobrir um caso de corrupção",
 ]
 
-# ==============================
-# INICIALIZAÇÃO DO JOGO
-# ==============================
-if "caso" not in st.session_state:
-    st.session_state.caso = {
-        "autor": random.choice(pessoas),
+# Inicialização do estado
+if "crime" not in st.session_state:
+    st.session_state.crime = None
+if "tentativas" not in st.session_state:
+    st.session_state.tentativas = 8
+if "mensagens" not in st.session_state:
+    st.session_state.mensagens = []
+if "revelado" not in st.session_state:
+    st.session_state.revelado = False
+
+# Função para gerar o crime
+def gerar_crime():
+    return {
+        "assassino": random.choice(pessoas),
+        "vitima": random.choice(["Jair, o porteiro", "Fabíola, a juíza", "Tadeu, o vereador", "Matt, o influencer"]),
         "local": random.choice(locais),
         "arma": random.choice(armas),
         "motivo": random.choice(motivos),
     }
+
+# Início do jogo
+if st.button("🔪 Gerar Novo Caso"):
+    st.session_state.crime = gerar_crime()
     st.session_state.tentativas = 8
-    st.session_state.encerrado = False
-    st.session_state.venceu = False
+    st.session_state.mensagens = []
+    st.session_state.revelado = False
 
-# ==============================
-# INTERFACE
-# ==============================
-st.subheader("🔍 Faça suas escolhas:")
+# Jogo em andamento
+if st.session_state.crime:
+    crime = st.session_state.crime
 
-autor_escolhido = st.selectbox("Quem cometeu o crime?", pessoas)
-local_escolhido = st.selectbox("Onde o crime aconteceu?", locais)
-arma_escolhida = st.selectbox("Com qual arma?", armas)
+    st.subheader("🩸 O CRIME")
+    st.write(f"A vítima é **{crime['vitima']}**.")
+    st.write("A cena do crime é misteriosa... Mas há rumores de uma discussão recente e um objeto fora do lugar.")
 
-# ==============================
-# LÓGICA DO JOGO
-# ==============================
-if st.button("Investigar 🔪") and not st.session_state.encerrado:
-    correto = st.session_state.caso
-    acertos = []
+    # Dicas progressivas
+    dicas = [
+        f"Dica 1️⃣: O suspeito(a) frequenta o mesmo ambiente que a vítima.",
+        f"Dica 2️⃣: O local do crime é um lugar **público**.",
+        f"Dica 3️⃣: A arma não é algo normalmente letal.",
+        f"Dica 4️⃣: O motivo envolve **{crime['motivo'].split()[2]}**...",  # pequena pista indireta
+    ]
 
-    if autor_escolhido == correto["autor"]:
-        acertos.append("autor")
-    if local_escolhido == correto["local"]:
-        acertos.append("local")
-    if arma_escolhida == correto["arma"]:
-        acertos.append("arma")
+    st.write(f"Tentativas restantes: **{st.session_state.tentativas}**")
 
-    if len(acertos) == 3:
-        st.success("🎉 Parabéns, detetive! Você desvendou o crime!")
-        st.markdown(f"""
-**Resumo do caso resolvido:**
-O(a) culpado(a) era **{correto['autor']}**,  
-que cometeu o crime **{correto['local']}**,  
-**{correto['arma']}**,  
-**{correto['motivo']}**.
-""")
-        st.session_state.venceu = True
-        st.session_state.encerrado = True
-    else:
-        st.session_state.tentativas -= 1
-        if st.session_state.tentativas > 0:
-            dicas = {
-                0: "Nenhuma pista certa ainda, tente observar melhor as conexões...",
-                1: "Você acertou **uma** das opções!",
-                2: "Você acertou **duas** das opções! Está perto!",
-            }
-            st.warning(
-                f"❌ Ainda não foi dessa vez. {dicas.get(len(acertos), '')}\n\n"
-                f"Tentativas restantes: **{st.session_state.tentativas}**"
-            )
+    assassino = st.selectbox("Quem você acha que é o assassino?", [""] + pessoas)
+    local = st.selectbox("Onde ocorreu o crime?", [""] + locais)
+    arma = st.selectbox("Qual foi a arma do crime?", [""] + armas)
+
+    if st.button("🔍 Fazer palpite"):
+        if st.session_state.tentativas <= 0:
+            st.warning("Suas tentativas acabaram! Revele o mistério abaixo.")
+        elif not assassino or not local or not arma:
+            st.warning("Preencha todas as opções antes de fazer um palpite.")
         else:
-            st.error("💀 O culpado fugiu! O caso foi encerrado.")
-            st.markdown(f"""
-**Solução do caso:**
-O(a) verdadeiro(a) assassino(a) era **{correto['autor']}**,  
-no local **{correto['local']}**,  
-**{correto['arma']}**,  
-**{correto['motivo']}**.
-""")
-            st.session_state.encerrado = True
+            st.session_state.tentativas -= 1
+            acertos = []
+            if assassino == crime["assassino"]:
+                acertos.append("assassino")
+            if local == crime["local"]:
+                acertos.append("local")
+            if arma == crime["arma"]:
+                acertos.append("arma")
 
-# ==============================
-# REINICIAR JOGO
-# ==============================
-if st.session_state.encerrado:
-    if st.button("Jogar Novamente 🔁"):
-        st.session_state.caso = {
-            "autor": random.choice(pessoas),
-            "local": random.choice(locais),
-            "arma": random.choice(armas),
-            "motivo": random.choice(motivos),
-        }
-        st.session_state.tentativas = 8
-        st.session_state.encerrado = False
-        st.session_state.venceu = False
-        st.experimental_rerun()
+            if len(acertos) == 3:
+                st.success(f"🎉 Você desvendou o caso! {crime['assassino']} matou {crime['vitima']} {crime['local']} com {crime['arma']}, {crime['motivo']}.")
+                st.session_state.revelado = True
+            else:
+                msg = f"❌ Palpite errado. Você acertou: {', '.join(acertos) if acertos else 'nada ainda'}."
+                st.session_state.mensagens.append(msg)
+                st.info(random.choice(dicas))
+
+    for msg in reversed(st.session_state.mensagens):
+        st.write(msg)
+
+    if st.session_state.tentativas == 0 and not st.session_state.revelado:
+        if st.button("🕯️ Revelar o mistério"):
+            crime = st.session_state.crime
+            st.error(f"O verdadeiro assassino era **{crime['assassino']}**, que matou **{crime['vitima']}** {crime['local']} com **{crime['arma']}**, {crime['motivo']}.")
+else:
+    st.info("Clique em **Gerar Novo Caso** para começar a investigação.")
