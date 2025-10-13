@@ -1,36 +1,85 @@
-streamlit run advogadogpt_realista.py
 import streamlit as st
+import random
 
-st.set_page_config(page_title="AdvogadoGPT Realista", page_icon="⚖️")
+# Configuração da página
+st.set_page_config(page_title="I.A. Detetive",layout="centered")
 
-st.title("⚖️ AdvogadoGPT Realista")
-st.write("Seu assistente jurídico confiável (e ligeiramente sarcástico).")
+st.title(" I.A. Detetive")
+st.write("Bem-vindo(a) ao simulador de casos criminais mais misterioso da internet. Clique no botão abaixo e descubra o próximo crime a ser desvendado!")
 
-duvida = st.text_input("Qual é sua dúvida jurídica?", placeholder="Ex: Posso ser preso por dever pensão?")
+# Listas de possibilidades
+pessoas = [
+    "Dona Gertrudes, a vizinha fofoqueira",
+    "Sr. Almeida, o advogado aposentado",
+    "Capitão Ramos, o militar reformado",
+    "Clara, a estudante de Direito",
+    "Ricardo, o estagiário do fórum",
+    "Padre Bento, o pároco local",
+    "Helena, a professora de Filosofia",
+]
 
-# Base de respostas simples
-respostas = {
-    "pensão": "Sim, pode. A prisão civil por dívida de pensão alimentícia é permitida no Brasil, pois o objetivo é forçar o pagamento, não punir. Mas claro, se pagar, sai. Milagre jurídico? Não, só coerção legítima.",
-    "contrato": "Contratos valem como lei entre as partes. Se você assinou sem ler, o Direito não tem pena de ingênuos — apenas cláusulas abusivas podem ser anuladas.",
-    "multa": "Multas devem respeitar o devido processo legal. Se o agente errou na autuação, você pode recorrer. Mas alegar 'não vi a placa' não é defesa, é confissão.",
-    "divórcio": "Sim, pode se divorciar quando quiser. Desde 2010, o divórcio é direto, sem necessidade de separação prévia. O amor acabou? A papelada resolve.",
-    "trabalho": "O empregado tem direito a férias, 13º e horas extras. Já o patrão tem direito a dor de cabeça se não pagar corretamente.",
-    "injúria": "Ofender alguém é crime, mesmo pela internet. Liberdade de expressão não é salvo-conduto pra ser grosseiro.",
-    "imposto": "Imposto é compulsório, não opcional. 'Não quero pagar' é um sentimento comum, mas juridicamente irrelevante.",
-}
+vitimas = [
+    "o síndico do prédio",
+    "a juíza da comarca",
+    "um vereador influente",
+    "o segurança do tribunal",
+    "um influenciador jurídico",
+    "o professor de Processo Penal",
+    "um corretor de imóveis",
+]
 
-if st.button("Responder"):
-    if not duvida.strip():
-        st.warning("Digite sua dúvida primeiro.")
-    else:
-        resposta_encontrada = None
-        for palavra, resposta in respostas.items():
-            if palavra in duvida.lower():
-                resposta_encontrada = resposta
-                break
-        
-        if resposta_encontrada:
-            st.success("Resposta do AdvogadoGPT:")
-            st.write(resposta_encontrada)
-        else:
-            st.info("Não encontrei nada específico, mas lembre-se: o Google não é advogado, e o advogado não é o Google.")
+locais = [
+    "na biblioteca da faculdade",
+    "no estacionamento do fórum",
+    "no plenário da câmara municipal",
+    "no saguão do tribunal",
+    "na cobertura de um prédio em Copacabana",
+    "na sala do júri",
+    "no cartório às escuras",
+]
+
+armas = [
+    "com um código civil de 2kg",
+    "com uma caneta tinteiro envenenada",
+    "com um grampeador pesado",
+    "com um exemplar de 'O Capital'",
+    "com uma garrafa de café fervente",
+    "com o próprio diploma de Direito",
+    "com um taco de sinuca",
+]
+
+motivos = [
+    "por vingança acadêmica",
+    "por causa de uma disputa de herança",
+    "por ciúmes profissionais",
+    "porque perdeu uma ação judicial",
+    "por puro tédio jurídico",
+    "para encobrir um caso de corrupção",
+    "por um erro de petição mal redigida",
+]
+
+# Função para gerar o caso
+def gerar_caso():
+    autor = random.choice(pessoas)
+    vitima = random.choice(vitimas)
+    local = random.choice(locais)
+    arma = random.choice(armas)
+    motivo = random.choice(motivos)
+
+    caso = f"""
+**CASO GERADO:**
+
+O(a) suspeito(a) **{autor}** teria assassinado **{vitima}** {local},  
+**{arma}**, **{motivo}**.
+
+Agora cabe a você, detetive, descobrir se há provas, álibi e o verdadeiro culpado...
+
+🔎 *O mistério está lançado!*
+"""
+    return caso
+
+# Botão
+if st.button("Gerar Novo Caso 🔪"):
+    st.markdown(gerar_caso())
+else:
+    st.info("Clique no botão acima para gerar um novo caso misterioso!")
