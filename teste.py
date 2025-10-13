@@ -10,22 +10,21 @@ st.write("Bem-vindo(a) ao simulador de casos criminais mais misterioso da intern
 # Listas de possibilidades
 pessoas = [
     "Dona Gertrudes, a vizinha fofoqueira",
-    "Sr. Almeida, o advogado aposentado",
-    "Capitão Ramos, o militar reformado",
+    "Dr. Campos, o advogado",
+    "Capitão Ramos, o militar aposentado",
     "Clara, a estudante de Direito",
     "Ricardo, o estagiário do fórum",
-    "Padre Bento, o pároco local",
+    "Padre Bento, o pároco",
     "Helena, a professora de Filosofia",
 ]
 
 vitimas = [
-    "o síndico do prédio",
-    "a juíza da comarca",
-    "um vereador influente",
-    "o segurança do tribunal",
-    "um influenciador jurídico",
-    "o professor de Processo Penal",
-    "um corretor de imóveis",
+    "Jair, o porteito do prédio",
+    "Fabíola, a juíza",
+    "Tadeu, o vereador",
+    "Robson, o segurança do tribunal",
+    "Matt, o influencer",
+    "Roberto, o corretor de imóveis",
 ]
 
 locais = [
@@ -35,27 +34,22 @@ locais = [
     "no saguão do tribunal",
     "na cobertura de um prédio em Copacabana",
     "na sala do júri",
-    "no cartório às escuras",
 ]
 
 armas = [
-    "com um código civil de 2kg",
+    "com um Vade Mecum de 8kg",
     "com uma caneta tinteiro envenenada",
     "com um grampeador pesado",
-    "com um exemplar de 'O Capital'",
     "com uma garrafa de café fervente",
-    "com o próprio diploma de Direito",
     "com um taco de sinuca",
 ]
 
 motivos = [
-    "por vingança acadêmica",
     "por causa de uma disputa de herança",
     "por ciúmes profissionais",
     "porque perdeu uma ação judicial",
-    "por puro tédio jurídico",
+    "por puro tédio",
     "para encobrir um caso de corrupção",
-    "por um erro de petição mal redigida",
 ]
 
 # Função para gerar o caso
