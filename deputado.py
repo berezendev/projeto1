@@ -2,14 +2,12 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
 
-# Configuração da página
 st.set_page_config(
     page_title="Previsor de Tempo Processual",
     page_icon="⚖️",
     layout="wide"
 )
 
-# CSS personalizado
 st.markdown("""
 <style>
     .main-header {
@@ -35,7 +33,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Dados do sistema
 ASSUNTOS_COMPATIVEIS = {
     'Ação de Cobrança': ['Ação Ordinária', 'Ação Monitória', 'Execução de Título Extrajudicial', 'Processo de Execução'],
     'Execução de Título Extrajudicial': ['Processo de Execução', 'Execução de Título Extrajudicial'],
@@ -146,36 +143,27 @@ def calcular_tempo_processo(tribunal, assunto, classe_processual, instancia, rec
     if not valido:
         return None, None, None, None, None, None, mensagem
     
-    # 1. TEMPO BASE DO ASSUNTO
     tempo_base = TEMPOS_BASE[assunto]
     
-    # 2. FATOR TRIBUNAL (eficiência regional)
     fator_tribunal = TRIBUNAIS[tribunal]['fator_tempo']
     
-    # 3. FATOR CLASSE PROCESSUAL
     fator_classe = CLASSES_PROCESSUAIS[classe_processual]['fator_tempo']
     
-    # 4. FATOR INSTÂNCIA
     fatores_instancia = {'1ª': 1.0, '2ª': 1.5, 'STJ': 2.0, 'STF': 2.0}
     fator_instancia = fatores_instancia[instancia]
     
-    # 5. FATOR RECURSOS
     fator_recursos = 1.0 + (recursos * 0.2)
     
-    # 6. FATOR URGÊNCIA
     fator_urgencia = 0.7 if urgencia else 1.0
     
-    # CÁLCULO FINAL
     tempo_total = tempo_base * fator_tribunal * fator_classe * fator_instancia * fator_recursos * fator_urgencia
     
     return int(tempo_total), tempo_base, fator_tribunal, fator_classe, fator_instancia, fator_recursos, "✅ Cálculo realizado com sucesso"
 
-# Interface Streamlit
 def main():
     # Cabeçalho
     st.markdown('<h1 class="main-header">⏰ PREVISOR DE TEMPO PROCESSUAL</h1>', unsafe_allow_html=True)
     
-    # Sidebar com informações
     with st.sidebar:
         st.header("ℹ️ Sobre o Sistema")
         st.info("""
@@ -196,20 +184,17 @@ def main():
         - Dados abertos da Justiça
         """)
     
-    # Formulário principal
     col1, col2 = st.columns(2)
     
     with col1:
         st.subheader("🎯 Configuração do Processo")
         
-        # Seleção de Assunto
         assunto = st.selectbox(
             "1. Selecione o Assunto:",
             options=list(ASSUNTOS_COMPATIVEIS.keys()),
             index=0
         )
         
-        # Classes compatíveis dinamicamente
         if assunto:
             classes_validas = ASSUNTOS_COMPATIVEIS[assunto]
             classe_processual = st.selectbox(
@@ -218,7 +203,6 @@ def main():
                 index=0
             )
         
-        # Tribunal
         tribunal = st.selectbox(
             "3. Selecione o Tribunal:",
             options=list(TRIBUNAIS.keys()),
@@ -229,14 +213,12 @@ def main():
     with col2:
         st.subheader("⚙️ Parâmetros Adicionais")
         
-        # Instância
         instancia = st.selectbox(
             "4. Instância do Processo:",
             options=['1ª', '2ª', 'STJ', 'STF'],
             index=0
         )
         
-        # Recursos
         recursos = st.slider(
             "5. Quantidade de Recursos Previstos:",
             min_value=0,
@@ -245,13 +227,11 @@ def main():
             help="Cada recurso adiciona aproximadamente 20% ao tempo total"
         )
         
-        # Urgência
         urgencia = st.checkbox(
             "6. Processo com Urgência",
             help="Processos urgentes têm tramitação 30% mais rápida"
         )
     
-    # Botão de cálculo
     if st.button("🎯 Calcular Previsão de Tempo", type="primary", use_container_width=True):
         with st.spinner("Calculando previsão de tempo..."):
             resultado = calcular_tempo_processo(tribunal, assunto, classe_processual, instancia, recursos, urgencia)
@@ -263,20 +243,16 @@ def main():
                 for classe_valida in ASSUNTOS_COMPATIVEIS[assunto]:
                     st.write(f"• {classe_valida}")
             else:
-                # CONVERSÃO PARA MESES/DIAS
                 meses = tempo_total // 30
                 dias = tempo_total % 30
                 anos = meses // 12
                 meses_resto = meses % 12
 
-                # DATA ESTIMADA
                 data_hoje = datetime.now()
                 data_estimada = data_hoje + timedelta(days=tempo_total)
                 
-                # RESULTADOS
                 st.success("✅ Cálculo realizado com sucesso!")
                 
-                # Resultado principal
                 st.markdown('<div class="result-box">', unsafe_allow_html=True)
                 st.subheader("📊 Previsão de Tempo Processual")
                 
@@ -306,7 +282,6 @@ def main():
                 )
                 st.markdown('</div>', unsafe_allow_html=True)
                 
-                # Detalhes do cálculo
                 st.subheader("🔍 Detalhamento do Cálculo")
                 
                 fatores = [
@@ -323,7 +298,6 @@ def main():
                         st.write(f"**{valor}**")
                         st.caption(descricao)
                 
-                # Gráfico de fatores (opcional)
                 st.subheader("📈 Influência dos Fatores")
                 
                 fatores_data = {
@@ -335,7 +309,6 @@ def main():
                 df_fatores = pd.DataFrame(fatores_data)
                 st.dataframe(df_fatores, use_container_width=True, hide_index=True)
 
-    # Rodapé
     st.markdown("---")
     st.caption(f"⚖️ Previsor de Tempo Processual")
     st.caption("📊 Baseado em estatísticas reais do CNJ e tribunais | 🚀 Desenvolvido para auxiliar na gestão processual")
