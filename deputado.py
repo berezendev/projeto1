@@ -337,7 +337,7 @@ def main():
 
     # Rodapé
     st.markdown("---")
-    st.caption(f"⚖️ Previsor de Tempo Processual | 📅 Consulta realizada em: {datetime.now().strftime('%d/%m/%Y %H:%M')}")
+    st.caption(f"⚖️ Previsor de Tempo Processual")
     st.caption("📊 Baseado em estatísticas reais do CNJ e tribunais | 🚀 Desenvolvido para auxiliar na gestão processual")
 
 if __name__ == "__main__":
